@@ -23,7 +23,7 @@ from search_history_ui import render_search_history_sidebar, render_search_histo
 from session_ui import render_session_sidebar, render_all_sessions_view, initialize_session_for_user, save_current_session
 
 # --- Constants ---
-CURRENT_USER = "Fady"  # This would typically come from authentication
+CURRENT_USER = "Haroon"  # This would typically come from authentication
 
 # --- Function to Stream Agent Responses ---
 def stream_agent_responses(final_response_string: str, delay_seconds: float = 0.05):
