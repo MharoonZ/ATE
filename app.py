@@ -5,6 +5,11 @@ import gc
 import psutil
 import os
 
+def log_memory_usage(context=""): 
+    process = psutil.Process(os.getpid())
+    mem_mb = process.memory_info().rss / 1024 / 1024
+    print(f"MEMORY USAGE [{context}]: {mem_mb:.2f} MB")
+    
 # --- Page Configuration MUST BE FIRST ---
 st.set_page_config(
     page_title="InsightAgentBot: Talk to Our Data & the Web",
@@ -368,10 +373,7 @@ if prompt:
 if len(st.session_state.messages) > 0 and len(st.session_state.messages) % 10 == 0:
     save_current_session()
     # --- Log memory usage utility ---
-def log_memory_usage(context=""): 
-    process = psutil.Process(os.getpid())
-    mem_mb = process.memory_info().rss / 1024 / 1024
-    print(f"MEMORY USAGE [{context}]: {mem_mb:.2f} MB")
+
 
 # Log memory at startup
 log_memory_usage("startup")
