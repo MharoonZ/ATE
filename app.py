@@ -2,6 +2,8 @@ import uuid
 import time
 import streamlit as st
 import gc
+import psutil
+import os
 
 # --- Page Configuration MUST BE FIRST ---
 st.set_page_config(
@@ -267,6 +269,7 @@ if prompt:
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
+        log_memory_usage("before agent response")
         if not st.session_state.chain_initialized or not st.session_state.chain_runnable:
             st.error("The AI Agent is not initialized. Please refresh or check the logs.")
             st.stop()
@@ -276,6 +279,7 @@ if prompt:
 
         try:
             # Each interaction uses the current session ID for history
+            log_memory_usage("before agent stream")
             chat_session_id = str(current_session_id or st.session_state.id)
             input_payload = {"input": prompt}
 
@@ -363,3 +367,11 @@ if prompt:
 # Auto-save session periodically (every 10 messages)
 if len(st.session_state.messages) > 0 and len(st.session_state.messages) % 10 == 0:
     save_current_session()
+    # --- Log memory usage utility ---
+def log_memory_usage(context=""): 
+    process = psutil.Process(os.getpid())
+    mem_mb = process.memory_info().rss / 1024 / 1024
+    print(f"MEMORY USAGE [{context}]: {mem_mb:.2f} MB")
+
+# Log memory at startup
+log_memory_usage("startup")
