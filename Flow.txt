@@ -1,0 +1,16 @@
+User Input → Streamlit Interface → LangChain Agent → Tool Selection
+                                    ↓
+                            ┌─────────────────┬─────────────────┐
+                            ↓                 ↓                 ↓
+                    OpenAI API + Gemini  Tavily API      SQL Server
+                    (AI Reasoning)      (Web Search)    (Database)
+                    ───────────────────────────┬──────────────────────────────────
+                                               ↓
+                            
+                                               ↓
+                    ──────────────────────────────────────────────────────────────
+                     ↓
+
+                     ↓
+
+                    Response Generation → Result Processing → User Display
