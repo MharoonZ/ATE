@@ -14,3 +14,4 @@ plotly==6.2.0
 pyodbc==5.2.0
 pandas==2.2.2
 requests==2.32.3
+psutil==5.9.8
