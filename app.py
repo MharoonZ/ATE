@@ -258,10 +258,7 @@ if current_session_id:
 if not st.session_state.messages:
     st.info("Welcome! I'm ready to help you query the database. Try asking something like: 'What are the distinct company names?' or 'How many records are in quotesresponses?'")
 
-# Display chat messages
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+history_container = st.container()
 
 # Handle re-run query
 if hasattr(st.session_state, 'rerun_query'):
@@ -271,6 +268,14 @@ else:
     prompt = st.chat_input("Ask a question about the database...")
 
 # Chat input
+# If no new prompt, render existing history now
+if not prompt:
+    with history_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+# Chat input handling
 if prompt:
     # Add message to session state
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -286,8 +291,11 @@ if prompt:
             len(st.session_state.messages) - 1
         )
     
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    # Re-render full history including the just-added user message
+    with history_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
     with st.chat_message("assistant"):
         log_memory_usage("before agent response")
