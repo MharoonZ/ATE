@@ -4,6 +4,7 @@ import streamlit as st
 import gc
 import psutil
 import os
+import re
 
 def log_memory_usage(context=""): 
     process = psutil.Process(os.getpid())
@@ -46,6 +47,21 @@ def stream_agent_responses(final_response_string: str, delay_seconds: float = 0.
             time.sleep(delay_seconds)
         else:
             time.sleep(delay_seconds * 1.5)
+# --- Output formatting helpers ---
+def _format_prices_in_text(text: str) -> str:
+    """Normalize currency numbers in text so they don't contain spaces like '$2, 110'.
+    - Collapse spaces after commas inside numeric groups
+    - Collapse spaces after the dollar sign
+    """
+    if not isinstance(text, str) or not text:
+        return text
+    # Remove spaces after commas when followed by a 3-digit group
+    text = re.sub(r"(?<=\d),\s+(?=\d{3}\b)", ",", text)
+    # Also handle optional dollar sign before the first group
+    text = re.sub(r"(\$?\d{1,3}),\s+(\d{3})", r"\1,\2", text)
+    # Remove any space after the dollar sign, e.g. '$ 7,500' -> '$7,500'
+    text = re.sub(r"\$\s+(\d)", r"$\1", text)
+    return text
 
 # --- Session State Initialization ---
 if "id" not in st.session_state:
@@ -335,6 +351,8 @@ if prompt:
                 full_response = full_response.replace('\n,\n', '\n')
                 full_response = full_response.replace(',,', ',')
                 full_response = full_response.replace(', ,', ',')
+                # Normalize currency formatting to avoid spaces in numbers
+                full_response = _format_prices_in_text(full_response)
             
             message_placeholder.markdown(full_response)
             full_response_content = full_response
